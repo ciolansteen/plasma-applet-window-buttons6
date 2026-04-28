@@ -16,8 +16,6 @@
 * Keep the represented task as explicit state so focus, minimize, maximize, and
   stacking changes update visibility, button actions, and inactive colors
   consistently.
-* Refresh Aurorae SVG button items when active/inactive state changes, avoiding
-  stale colors that only corrected themselves after hover.
 * Fix stale pointer state by forwarding corrected release/hover coordinates to
   KDecoration.
 * Use Qt 6 input-event constructors for synthetic button events while preserving
