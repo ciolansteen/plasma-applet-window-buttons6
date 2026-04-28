@@ -60,6 +60,13 @@ MouseArea{
         return containsPress || isToggledActivated ? "pressed-center" : "hover-center";
     }
 
+    function refreshSvgItems() {
+        svgNormalIcon.updateNeeded();
+        svgHoveredIcon.updateNeeded();
+    }
+
+    onIsActiveChanged: refreshSvgItems()
+
     KSvg.Svg {
         id: buttonSvg
         imagePath: buttonImagePath
@@ -77,6 +84,8 @@ MouseArea{
         opacity: !containsMouse && !containsPress && !isToggledActivated ? 1 : 0
 
         KSvg.SvgItem {
+            id: svgNormalIcon
+
             x: (parent.width / 2) - (width / 2)
             y: (parent.height / 2 ) - (height / 2)
 
@@ -120,6 +129,8 @@ MouseArea{
         opacity: Math.abs(svgNormalItem.opacity - 1)
 
         KSvg.SvgItem {
+            id: svgHoveredIcon
+
             x: (parent.width / 2) - (width / 2)
             y: (parent.height / 2 ) - (height / 2)
 
