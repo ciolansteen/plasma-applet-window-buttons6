@@ -17,11 +17,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Checkout ci-templates
-        uses: actions/checkout@v4
-        with:
-          repository: archRepo/ci-templates
-          path: .ci-templates
-          ref: main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --branch main \
+            "${{ github.server_url }}/archRepo/ci-templates.git" \
+            .ci-templates
 
       - name: Trigger package build
         uses: ./.ci-templates/trigger-arch-package
