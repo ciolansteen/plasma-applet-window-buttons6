@@ -1,6 +1,6 @@
 ### CHANGELOG
 
-#### iAdrian fork
+#### Version 0.15.0 - iAdrian fork
 
 * Fix top-panel/global-menu behavior for borderless maximized windows: panel
   buttons now target the maximized window on the current screen even when a
@@ -29,6 +29,10 @@
 * Use Qt 6 input-event constructors for synthetic button events while preserving
   KDecoration-local positions and the original pointer device.
 * Build with C++20 directly, matching current KDecoration3 requirements.
+* Update package metadata and requirements for the Plasma 6/KDecoration3 fork,
+  and remove noisy runtime debug logging from QML/C++ paths.
+* Fix bridge signal cleanup and decoration plugin metadata validation found
+  during the package audit.
 
 #### Version 0.11.0
 

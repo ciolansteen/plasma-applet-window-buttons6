@@ -120,7 +120,6 @@ PlasmoidItem {
     }
 
     function initializeControlButtonsModel() {
-        console.log("recreating buttons");
         sharedDecorationItem.createDecoration();
         var buttonsList = buttonsStr.split('|');
         ModelTools.initializeControlButtonsModel(buttonsList, tasksPreparedArray, controlButtonsModel, true);

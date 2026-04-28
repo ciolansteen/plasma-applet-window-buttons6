@@ -57,45 +57,63 @@ Changes:
 - Synthetic Qt input events use Qt 6 constructors while keeping
   `event->position()` in KDecoration's local coordinate system and preserving the
   originating pointer device.
+- Decoration buttons are recreated when the represented target window changes,
+  which keeps Breeze's internal maximize/restore `checked` state synchronized
+  even when both the old and new targets are maximized.
 
 The goal is not to make a generic fork with every possible policy knob. It is to
 provide predictable defaults for a Plasma setup where maximized windows are
 borderless and the top panel owns their window controls.
 
-This is a Plasma 5 applet that shows window buttons in your panels. This plasmoid is coming from [Latte land](https://phabricator.kde.org/source/latte-dock/repository/master/) but it can also support Plasma panels.
+## Plasma 6 / KDecoration3 compatibility
 
-<p align="center">
-<img src="https://i.imgur.com/4FItfte.gif" width="580"><br/>
-<i>slide in/out animation</i>
-</p>
+This fork targets Plasma 6 and KDecoration3. Plasma 6.3 introduced the
+KDecoration3 API break so server-side decorations can handle fractional scaling
+with floating-point geometry. The code intentionally builds against
+KDecoration3 rather than carrying KDecoration2 compatibility shims.
 
-<p align="center">
-<img src="https://i.imgur.com/70qeMME.png" width="580"><br/>
-<i>Breeze decoration</i>
-</p>
+Minimum build/runtime expectations:
 
-<p align="center">
-<img src="https://i.imgur.com/uEen6P0.png" width="580"><br/>
-<i>BreezeEnhanced decoration</i>
-</p>
+- Qt >= 6.6
+- KDE Frameworks >= 6.0
+- Plasma >= 6.0
+- KDecoration3 >= 6.3
+- CMake >= 3.20
+- C++20 compiler
 
-<p align="center">
-<img src="https://i.imgur.com/Zz20RXC.png" width="580"><br/>
-<i>Settings window</i>
-</p>
+The native button bridge uses KDecoration3 `DecorationButton` and
+`DecoratedWindow` state, including the button `checked` state used by Breeze for
+maximize/restore and on-all-desktops glyphs. When changing this area, test both
+Breeze plugin buttons and Aurorae buttons because they use different rendering
+paths.
 
-# Requires
+## Install
 
-- Qt >= 5.9
-- KF5 >= 5.38
-- Plasma >= 5.23.2
-- KDecoration2 >= 5.23
+On Arch, use the packaged build:
 
-**Qt elements**: Gui Qml Quick
+```bash
+pacman -S plasma-applet-window-buttons
+```
 
-**KF5 elements**: CoreAddons Declarative Plasma PlasmaQuick extra-cmake-modules
+For local development:
 
+```bash
+cmake -B build -S .
+cmake --build build
+sudo cmake --install build
+systemctl --user restart plasma-plasmashell.service
+```
 
-# Install
+Avoid injecting a rebuilt native QML module into a running plasmashell through a
+local import override. For native plugin experiments, install a normal package
+or use an isolated Plasma/plasmoid test session.
 
-You can execute `sh install.sh` in the root directory as long as you have installed the previous mentioned development packages. For more details please read [INSTALLATION.md](/INSTALLATION.md)
+## Audit notes
+
+- Keep the fork aligned with KDE's KDecoration3 direction: avoid KDecoration2
+  compatibility paths and prefer `QRectF`/floating geometry APIs where available.
+- Runtime debug logging should stay out of normal builds; use temporary local
+  instrumentation for diagnosis and remove it before committing.
+- Treat `TaskManager.TasksModel` state as asynchronous. Prefer small,
+  observable UI refreshes over stale task-pointer caches when decoration state
+  changes.
