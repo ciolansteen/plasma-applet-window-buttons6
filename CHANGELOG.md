@@ -21,6 +21,9 @@
 * Distinguish special out-of-task-model focus, such as Yakuake, from normal
   floating windows: special focus makes buttons inactive and non-clickable,
   while tracked floating focus keeps them usable but dimmed.
+* Recreate decoration buttons when the represented target window changes, so
+  Breeze refreshes the maximize/restore glyph even when the maximized state
+  remains true across the target switch.
 * Fix stale pointer state by forwarding corrected release/hover coordinates to
   KDecoration.
 * Use Qt 6 input-event constructors for synthetic button events while preserving

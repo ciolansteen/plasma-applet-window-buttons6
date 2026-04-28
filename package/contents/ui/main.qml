@@ -179,6 +179,7 @@ PlasmoidItem {
         return PlasmaCore.Types.ActiveStatus;
     }
     onButtonsStrChanged: initButtons()
+    onLastActiveTaskItemChanged: initButtons()
     Component.onCompleted: {
         if (plasmoid.configuration.buttons.indexOf("9") === -1)
             plasmoid.configuration.buttons = plasmoid.configuration.buttons.concat("|9");
