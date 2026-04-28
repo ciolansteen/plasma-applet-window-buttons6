@@ -39,6 +39,8 @@ PlasmoidItem {
     }
     readonly property bool selectedDecorationExists: decorations.decorationExists(plasmoid.configuration.selectedPlugin, plasmoid.configuration.selectedTheme)
     readonly property bool slideAnimationEnabled: ((visibility !== AppletDecoration.Types.AlwaysVisible) && (plasmoid.configuration.hiddenState === AppletDecoration.Types.SlideOut))
+    readonly property int slideAnimationDuration: plasmoid.configuration.customSlideAnimation ? plasmoid.configuration.slideAnimationDuration : 250
+    readonly property int slideAnimationAcceleration: plasmoid.configuration.customSlideAnimation ? plasmoid.configuration.slideAnimationAcceleration : 2
     readonly property bool isEmptySpaceEnabled: plasmoid.configuration.hiddenState === AppletDecoration.Types.EmptySpace
     readonly property int visibility: plasmoid.configuration.visibility
     readonly property bool perScreenActive: plasmoid.configuration.perScreenActive
@@ -156,6 +158,19 @@ PlasmoidItem {
             windowInfoLoader.item.togglePinToAllDesktops();
         else if (windowOperation === AppletDecoration.Types.ToggleKeepAbove)
             windowInfoLoader.item.toggleKeepAbove();
+    }
+
+    function slideAnimationEasingType() {
+        if (slideAnimationAcceleration <= 0)
+            return Easing.Linear;
+        if (slideAnimationAcceleration === 1)
+            return Easing.InQuad;
+        if (slideAnimationAcceleration === 2)
+            return Easing.InCubic;
+        if (slideAnimationAcceleration === 3)
+            return Easing.InQuart;
+
+        return Easing.InQuint;
     }
 
     clip: true
@@ -433,8 +448,8 @@ PlasmoidItem {
         enabled: slideAnimationEnabled && plasmoid.formFactor === PlasmaCore.Types.Horizontal
 
         NumberAnimation {
-            duration: 250
-            easing.type: Easing.InCubic
+            duration: root.slideAnimationDuration
+            easing.type: root.slideAnimationEasingType()
         }
 
     }
@@ -443,8 +458,8 @@ PlasmoidItem {
         enabled: slideAnimationEnabled && plasmoid.formFactor === PlasmaCore.Types.Vertical
 
         NumberAnimation {
-            duration: 250
-            easing.type: Easing.InCubic
+            duration: root.slideAnimationDuration
+            easing.type: root.slideAnimationEasingType()
         }
 
     }

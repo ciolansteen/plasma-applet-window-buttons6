@@ -56,6 +56,22 @@ SPDX-License-Identifier: GPL-2.0-or-later
       <label>when the applet should be hidden how it should behave</label>
       <default>0</default>
     </entry>
+    <entry name="customSlideAnimation" type="Bool">
+      <default>false</default>
+      <label>use custom slide animation timing instead of the default</label>
+    </entry>
+    <entry name="slideAnimationDuration" type="Int">
+      <default>250</default>
+      <min>50</min>
+      <max>1000</max>
+      <label>slide animation duration in milliseconds</label>
+    </entry>
+    <entry name="slideAnimationAcceleration" type="Int">
+      <default>2</default>
+      <min>0</min>
+      <max>4</max>
+      <label>slide animation acceleration strength, from linear to aggressive</label>
+    </entry>
     <entry name="inactiveStateEnabled" type="Bool">
       <default>false</default>
       <label>draw buttons in inactive state when is needed</label>

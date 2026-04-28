@@ -39,6 +39,9 @@
 * Make "At least one window is shown" depend on any non-minimized tracked window,
   not only the active or maximized target, while still using the best shown
   window as the disabled fallback target when focus is outside the task model.
+* Add optional custom slide animation settings: keep the upstream 250 ms
+  accelerated slide as the default, or enable custom timing with duration and
+  acceleration strength controls in Behavior settings.
 
 #### Version 0.11.0
 
