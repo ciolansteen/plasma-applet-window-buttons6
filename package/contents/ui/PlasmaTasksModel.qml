@@ -26,20 +26,15 @@ Item {
     readonly property Item lastActiveTaskItem: targetTaskItem
     property Item activeTaskItem: null
     property Item lastMaximizedTaskItem: null
-    property Item lastBackgroundMaximizedTaskItem: null
     property Item targetTaskItem: null
 
-    function isUsableMaximizedTask(task) {
-        return task && task.isMaximized && !task.isMinimized;
-    }
-
-    function maximizedTaskItem(excludedTask) {
+    function maximizedTaskItem() {
         var bestTask = null;
 
         for (var i = 0; i < tasksRepeater.count; ++i) {
             var task = tasksRepeater.itemAt(i);
 
-            if (!isUsableMaximizedTask(task) || task === excludedTask)
+            if (!task || !task.isMaximized || task.isMinimized)
                 continue;
 
             if (!bestTask || task.lastActivated > bestTask.lastActivated || (task.lastActivated === bestTask.lastActivated && task.stackingOrder > bestTask.stackingOrder))
@@ -50,27 +45,15 @@ Item {
     }
 
     function updateWindowState() {
-        var currentMaximizedTaskItem = maximizedTaskItem(null);
-        var backgroundMaximizedTaskItem = maximizedTaskItem(activeTaskItem);
+        lastMaximizedTaskItem = maximizedTaskItem();
+        existsMaximizedWindow = lastMaximizedTaskItem !== null;
 
-        if (currentMaximizedTaskItem)
-            lastMaximizedTaskItem = currentMaximizedTaskItem;
-        else if (!isUsableMaximizedTask(lastMaximizedTaskItem))
-            lastMaximizedTaskItem = null;
-
-        if (backgroundMaximizedTaskItem)
-            lastBackgroundMaximizedTaskItem = backgroundMaximizedTaskItem;
-        else if (!isUsableMaximizedTask(lastBackgroundMaximizedTaskItem))
-            lastBackgroundMaximizedTaskItem = null;
-
-        existsMaximizedWindow = lastMaximizedTaskItem !== null || lastBackgroundMaximizedTaskItem !== null;
-
-        if (isUsableMaximizedTask(activeTaskItem)) {
+        if (activeTaskItem && activeTaskItem.isMaximized && !activeTaskItem.isMinimized) {
             targetTaskItem = activeTaskItem;
             return;
         }
 
-        targetTaskItem = lastMaximizedTaskItem || lastBackgroundMaximizedTaskItem || activeTaskItem;
+        targetTaskItem = lastMaximizedTaskItem || activeTaskItem;
     }
 
     function activeTask() {
@@ -218,9 +201,6 @@ Item {
 
                     if (plasmaTasksItem.lastMaximizedTaskItem === task)
                         plasmaTasksItem.lastMaximizedTaskItem = null;
-
-                    if (plasmaTasksItem.lastBackgroundMaximizedTaskItem === task)
-                        plasmaTasksItem.lastBackgroundMaximizedTaskItem = null;
 
                     if (plasmaTasksItem.targetTaskItem === task)
                         plasmaTasksItem.targetTaskItem = null;
