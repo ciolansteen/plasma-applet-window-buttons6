@@ -13,6 +13,9 @@
   maximized window exists on the current screen.
 * Evaluate inactive button state against the represented maximized window
   instead of the focused floating window.
+* Keep the represented task as explicit state so focus, minimize, maximize, and
+  stacking changes update visibility, button actions, and inactive colors
+  consistently.
 * Fix stale pointer state by forwarding corrected release/hover coordinates to
   KDecoration.
 * Use Qt 6 input-event constructors for synthetic button events while preserving

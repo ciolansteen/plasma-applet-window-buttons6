@@ -88,7 +88,7 @@ PlasmoidItem {
     readonly property bool existsMaximizedWindow: (windowInfoLoader.item && windowInfoLoader.item.existsMaximizedWindow)
     readonly property bool isLastActiveWindowPinned: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isOnAllDesktops
     readonly property bool isLastActiveWindowMaximized: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximized
-    readonly property bool isLastActiveWindowActive: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isActive
+    readonly property bool isLastActiveWindowActive: windowInfoLoader.item && windowInfoLoader.item.targetWindowIsActive
     readonly property bool isLastActiveWindowKeepAbove: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isKeepAbove
     readonly property bool isLastActiveWindowClosable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isClosable
     readonly property bool isLastActiveWindowMaximizable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximizable

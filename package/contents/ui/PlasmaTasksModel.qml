@@ -19,15 +19,11 @@ Item {
     readonly property bool existsWindowActive: activeTaskItem && tasksRepeater.count > 0 && (root.perScreenActive || activeTaskItem.isActive)
     readonly property bool existsWindowShown: targetTaskItem && tasksRepeater.count > 0 && !targetTaskItem.isMinimized
     property bool existsMaximizedWindow: false
-    readonly property Item targetTaskItem: {
-        if (activeTaskItem && activeTaskItem.isMaximized)
-            return activeTaskItem;
-
-        return maximizedTaskItem() || activeTaskItem;
-    }
+    readonly property bool targetWindowIsActive: targetTaskItem && existsWindowShown && targetTaskItem.isActive
     readonly property Item lastActiveTaskItem: targetTaskItem
     property Item activeTaskItem: null
     property Item lastMaximizedTaskItem: null
+    property Item targetTaskItem: null
 
     function maximizedTaskItem() {
         var bestTask = null;
@@ -45,18 +41,32 @@ Item {
         return bestTask;
     }
 
-    function updateMaximizedTask() {
+    function updateWindowState() {
         lastMaximizedTaskItem = maximizedTaskItem();
         existsMaximizedWindow = lastMaximizedTaskItem !== null;
+
+        if (activeTaskItem && activeTaskItem.isMaximized && !activeTaskItem.isMinimized) {
+            targetTaskItem = activeTaskItem;
+            return;
+        }
+
+        targetTaskItem = lastMaximizedTaskItem || activeTaskItem;
+    }
+
+    function activeTask() {
+        for (var i = 0; i < tasksRepeater.count; ++i) {
+            var task = tasksRepeater.itemAt(i);
+
+            if (task && task.isActive)
+                return task;
+        }
+
+        return null;
     }
 
     function actionTargetTaskItem() {
-        updateMaximizedTask();
-
-        if (activeTaskItem && activeTaskItem.isMaximized)
-            return activeTaskItem;
-
-        return lastMaximizedTaskItem || activeTaskItem;
+        updateWindowState();
+        return targetTaskItem;
     }
 
     function toggleMaximized() {
@@ -169,24 +179,18 @@ Item {
                 }
 
                 onIsActiveChanged: {
-                    if (isActive) {
-                        plasmaTasksItem.activeTaskItem = task;
-
-                        if (isMaximized)
-                            plasmaTasksItem.lastMaximizedTaskItem = task;
-                    }
-
+                    plasmaTasksItem.activeTaskItem = isActive ? task : plasmaTasksItem.activeTask();
+                    plasmaTasksItem.updateWindowState();
                 }
-                onIsMinimizedChanged: plasmaTasksItem.updateMaximizedTask()
-                onIsMaximizedChanged: plasmaTasksItem.updateMaximizedTask()
-                onLastActivatedChanged: plasmaTasksItem.updateMaximizedTask()
-                onStackingOrderChanged: plasmaTasksItem.updateMaximizedTask()
+                onIsMinimizedChanged: plasmaTasksItem.updateWindowState()
+                onIsMaximizedChanged: plasmaTasksItem.updateWindowState()
+                onLastActivatedChanged: plasmaTasksItem.updateWindowState()
+                onStackingOrderChanged: plasmaTasksItem.updateWindowState()
                 Component.onCompleted: {
                     if (isActive)
                         plasmaTasksItem.activeTaskItem = task;
 
-                    if (isMaximized && !isMinimized)
-                        plasmaTasksItem.updateMaximizedTask();
+                    plasmaTasksItem.updateWindowState();
                 }
                 Component.onDestruction: {
                     if (plasmaTasksItem.activeTaskItem === task)
@@ -195,7 +199,10 @@ Item {
                     if (plasmaTasksItem.lastMaximizedTaskItem === task)
                         plasmaTasksItem.lastMaximizedTaskItem = null;
 
-                    Qt.callLater(plasmaTasksItem.updateMaximizedTask);
+                    if (plasmaTasksItem.targetTaskItem === task)
+                        plasmaTasksItem.targetTaskItem = null;
+
+                    Qt.callLater(plasmaTasksItem.updateWindowState);
                 }
             }
 
