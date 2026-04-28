@@ -15,6 +15,8 @@
   instead of the focused floating window.
 * Fix stale pointer state by forwarding corrected release/hover coordinates to
   KDecoration.
+* Use Qt 6 input-event constructors for synthetic button events while preserving
+  KDecoration-local positions and the original pointer device.
 * Build with C++20 directly, matching current KDecoration3 requirements.
 
 #### Version 0.11.0

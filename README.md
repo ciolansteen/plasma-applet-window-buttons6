@@ -49,6 +49,9 @@ Changes:
   decoration colors; when that target window is active, they use active colors.
 - Button release and hover events are forwarded to KDecoration with corrected
   coordinates, avoiding stale pointer state caused by mismatched event geometry.
+- Synthetic Qt input events use Qt 6 constructors while keeping
+  `event->position()` in KDecoration's local coordinate system and preserving the
+  originating pointer device.
 
 The goal is not to make a generic fork with every possible policy knob. It is to
 provide predictable defaults for a Plasma setup where maximized windows are
