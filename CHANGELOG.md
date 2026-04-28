@@ -24,8 +24,6 @@
 * Keep a fallback maximized window behind a temporarily maximized floating
   window, so restoring the floating window returns panel controls to the
   maximized window behind it.
-* Avoid a stale restored floating window winning target selection over the
-  remembered background maximized window during rapid maximize/restore updates.
 * Fix stale pointer state by forwarding corrected release/hover coordinates to
   KDecoration.
 * Use Qt 6 input-event constructors for synthetic button events while preserving
