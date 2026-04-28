@@ -426,7 +426,7 @@ void PreviewButtonItem::onButtonDamaged()
 
 void PreviewButtonItem::onDecorationDamaged(const QRegion &region)
 {
-    if (region.intersects(m_visualGeometry))
+    if (region.isEmpty() || region.intersects(m_visualGeometry))
     {
         update();
     }
