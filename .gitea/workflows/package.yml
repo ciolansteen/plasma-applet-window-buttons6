@@ -30,4 +30,4 @@ jobs:
           workflow_file: build.yml
           ref: main
           triggered_by: ${{ github.repository }}@${{ github.sha }}
-          CI_TOKEN: ${{ secrets.ORG_SECRETS_TOKEN }}
+          CI_TOKEN: ${{ secrets.CI_TOKEN }}
