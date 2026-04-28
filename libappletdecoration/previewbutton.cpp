@@ -466,6 +466,7 @@ void PreviewButtonItem::mousePressEvent(QMouseEvent *event)
     QMouseEvent e(event->type(), m_visualGeometry.center(), event->button(), event->buttons(), event->modifiers());
 
     QCoreApplication::instance()->sendEvent(m_button, &e);
+    onButtonDamaged();
 }
 
 void PreviewButtonItem::mouseReleaseEvent(QMouseEvent *event)
@@ -481,12 +482,14 @@ void PreviewButtonItem::mouseReleaseEvent(QMouseEvent *event)
     //! that confirm the button visual coordinates
     QMouseEvent e(event->type(), inItem ? m_visualGeometry.center() : QPoint(-5, -5), event->button(), event->buttons(), event->modifiers());
 
-    QCoreApplication::instance()->sendEvent(m_button, event);
+    QCoreApplication::instance()->sendEvent(m_button, &e);
 
     if (inItem)
     {
         emit clicked();
     }
+
+    onButtonDamaged();
 }
 
 void PreviewButtonItem::mouseMoveEvent(QMouseEvent *event)
@@ -501,6 +504,7 @@ void PreviewButtonItem::mouseMoveEvent(QMouseEvent *event)
     QMouseEvent e(event->type(), m_visualGeometry.center(), event->button(), event->buttons(), event->modifiers());
 
     QCoreApplication::instance()->sendEvent(m_button, &e);
+    onButtonDamaged();
 }
 
 void PreviewButtonItem::hoverEnterEvent(QHoverEvent *event)
@@ -516,6 +520,7 @@ void PreviewButtonItem::hoverEnterEvent(QHoverEvent *event)
                   event->modifiers());
 
     QCoreApplication::instance()->sendEvent(m_button, &e);
+    onButtonDamaged();
 }
 
 void PreviewButtonItem::hoverLeaveEvent(QHoverEvent *event)
@@ -530,6 +535,7 @@ void PreviewButtonItem::hoverLeaveEvent(QHoverEvent *event)
     QHoverEvent e(event->type(), QPoint(-5, -5), m_visualGeometry.center(), event->modifiers());
 
     QCoreApplication::instance()->sendEvent(m_button, &e);
+    onButtonDamaged();
 }
 
 void PreviewButtonItem::hoverMoveEvent(QHoverEvent *event)
@@ -540,19 +546,26 @@ void PreviewButtonItem::hoverMoveEvent(QHoverEvent *event)
     }
 
     QPoint newPos(qBound((double) m_visualGeometry.left(), m_visualGeometry.left() + event->position().x(), (double) m_visualGeometry.right()),
-                  qBound((double) m_visualGeometry.top(), m_visualGeometry.top() + event->position().x(), (double) m_visualGeometry.bottom()));
+                  qBound((double) m_visualGeometry.top(), m_visualGeometry.top() + event->position().y(), (double) m_visualGeometry.bottom()));
 
     QPoint oldPos(qBound((double) m_visualGeometry.left(), m_visualGeometry.left() + event->oldPosF().x(), (double) m_visualGeometry.right()),
-                  qBound((double) m_visualGeometry.top(), m_visualGeometry.top() + event->oldPosF().x(), (double) m_visualGeometry.bottom()));
+                  qBound((double) m_visualGeometry.top(), m_visualGeometry.top() + event->oldPosF().y(), (double) m_visualGeometry.bottom()));
 
     //! this a workaround in order to send proper coordinates
     //! that confirm the button visual coordinates
     QHoverEvent e(event->type(), newPos, oldPos, event->modifiers());
 
     QCoreApplication::instance()->sendEvent(m_button, &e);
+    onButtonDamaged();
 }
 
 void PreviewButtonItem::focusOutEvent(QFocusEvent *event)
 {
+    if (!m_button)
+    {
+        return;
+    }
+
     QCoreApplication::instance()->sendEvent(m_button, event);
+    onButtonDamaged();
 }
