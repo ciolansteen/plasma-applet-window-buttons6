@@ -25,7 +25,6 @@ Item {
     readonly property bool targetObscuredByTrackedWindow: targetTaskItem && existsWindowShown && !targetWindowIsActive && hasActiveTask && activeTaskItem !== targetTaskItem
     readonly property Item lastActiveTaskItem: targetTaskItem
     property Item activeTaskItem: null
-    property Item lastMaximizedTaskItem: null
     property Item lastBackgroundMaximizedTaskItem: null
     property Item targetTaskItem: null
 
@@ -50,27 +49,23 @@ Item {
     }
 
     function updateWindowState() {
-        var currentMaximizedTaskItem = maximizedTaskItem(null);
         var backgroundMaximizedTaskItem = maximizedTaskItem(activeTaskItem);
-
-        if (currentMaximizedTaskItem)
-            lastMaximizedTaskItem = currentMaximizedTaskItem;
-        else if (!isUsableMaximizedTask(lastMaximizedTaskItem))
-            lastMaximizedTaskItem = null;
 
         if (backgroundMaximizedTaskItem)
             lastBackgroundMaximizedTaskItem = backgroundMaximizedTaskItem;
         else if (!isUsableMaximizedTask(lastBackgroundMaximizedTaskItem))
             lastBackgroundMaximizedTaskItem = null;
 
-        existsMaximizedWindow = lastMaximizedTaskItem !== null || lastBackgroundMaximizedTaskItem !== null;
-
         if (isUsableMaximizedTask(activeTaskItem)) {
+            existsMaximizedWindow = true;
             targetTaskItem = activeTaskItem;
             return;
         }
 
-        targetTaskItem = lastMaximizedTaskItem || lastBackgroundMaximizedTaskItem || activeTaskItem;
+        var targetMaximizedTaskItem = backgroundMaximizedTaskItem || lastBackgroundMaximizedTaskItem;
+
+        existsMaximizedWindow = targetMaximizedTaskItem !== null;
+        targetTaskItem = targetMaximizedTaskItem || activeTaskItem;
     }
 
     function activeTask() {
@@ -215,9 +210,6 @@ Item {
                 Component.onDestruction: {
                     if (plasmaTasksItem.activeTaskItem === task)
                         plasmaTasksItem.activeTaskItem = null;
-
-                    if (plasmaTasksItem.lastMaximizedTaskItem === task)
-                        plasmaTasksItem.lastMaximizedTaskItem = null;
 
                     if (plasmaTasksItem.lastBackgroundMaximizedTaskItem === task)
                         plasmaTasksItem.lastBackgroundMaximizedTaskItem = null;
