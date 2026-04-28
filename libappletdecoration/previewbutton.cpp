@@ -414,17 +414,14 @@ void PreviewButtonItem::syncInternalGeometry()
 
 void PreviewButtonItem::onButtonDamaged()
 {
-    if (m_button)
-    {
-        m_button->update();
-    }
-
     if (m_sharedDecoration && m_sharedDecoration->decoration())
     {
-        m_sharedDecoration->decoration()->update(m_visualGeometry);
+        emit m_sharedDecoration->decoration()->damaged(m_visualGeometry);
     }
-
-    update();
+    else
+    {
+        update();
+    }
 }
 
 void PreviewButtonItem::onDecorationDamaged(const QRegion &region)
