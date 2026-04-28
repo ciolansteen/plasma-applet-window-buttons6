@@ -17,7 +17,7 @@ Item {
 
     property bool filterByScreen: true
     readonly property bool existsWindowActive: activeTaskItem && tasksRepeater.count > 0 && (root.perScreenActive || activeTaskItem.isActive)
-    readonly property bool existsWindowShown: targetTaskItem && tasksRepeater.count > 0 && !targetTaskItem.isMinimized
+    readonly property bool existsWindowShown: shownTaskItem && tasksRepeater.count > 0
     readonly property bool hasTrackedWindow: tasksRepeater.count > 0
     property bool existsMaximizedWindow: false
     readonly property bool targetWindowIsActive: targetTaskItem && existsWindowShown && targetTaskItem.isActive
@@ -28,7 +28,24 @@ Item {
     readonly property Item lastActiveTaskItem: targetTaskItem
     property Item activeTaskItem: null
     property Item lastMaximizedTaskItem: null
+    property Item shownTaskItem: null
     property Item targetTaskItem: null
+
+    function bestShownTaskItem() {
+        var bestTask = null;
+
+        for (var i = 0; i < tasksRepeater.count; ++i) {
+            var task = tasksRepeater.itemAt(i);
+
+            if (!task || task.isMinimized)
+                continue;
+
+            if (!bestTask || task.lastActivated > bestTask.lastActivated || (task.lastActivated === bestTask.lastActivated && task.stackingOrder > bestTask.stackingOrder))
+                bestTask = task;
+        }
+
+        return bestTask;
+    }
 
     function maximizedTaskItem() {
         var bestTask = null;
@@ -47,6 +64,7 @@ Item {
     }
 
     function updateWindowState() {
+        shownTaskItem = bestShownTaskItem();
         lastMaximizedTaskItem = maximizedTaskItem();
         existsMaximizedWindow = lastMaximizedTaskItem !== null;
 
@@ -55,7 +73,7 @@ Item {
             return;
         }
 
-        targetTaskItem = lastMaximizedTaskItem || activeTaskItem;
+        targetTaskItem = lastMaximizedTaskItem || activeTaskItem || shownTaskItem;
     }
 
     function activeTask() {
@@ -203,6 +221,9 @@ Item {
 
                     if (plasmaTasksItem.lastMaximizedTaskItem === task)
                         plasmaTasksItem.lastMaximizedTaskItem = null;
+
+                    if (plasmaTasksItem.shownTaskItem === task)
+                        plasmaTasksItem.shownTaskItem = null;
 
                     if (plasmaTasksItem.targetTaskItem === task)
                         plasmaTasksItem.targetTaskItem = null;

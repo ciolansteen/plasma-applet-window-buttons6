@@ -36,6 +36,9 @@
 * Dim controls for active floating-only sessions when no maximized window is
   represented, while keeping them clickable, and hard-inactivate them when focus
   is outside the task model such as Yakuake.
+* Make "At least one window is shown" depend on any non-minimized tracked window,
+  not only the active or maximized target, while still using the best shown
+  window as the disabled fallback target when focus is outside the task model.
 
 #### Version 0.11.0
 
