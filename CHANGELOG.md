@@ -33,6 +33,9 @@
   and remove noisy runtime debug logging from QML/C++ paths.
 * Fix bridge signal cleanup and decoration plugin metadata validation found
   during the package audit.
+* Dim controls for active floating-only sessions when no maximized window is
+  represented, while keeping them clickable, and hard-inactivate them when focus
+  is outside the task model such as Yakuake.
 
 #### Version 0.11.0
 

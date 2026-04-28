@@ -87,7 +87,7 @@ PlasmoidItem {
     readonly property bool existsWindowShown: (windowInfoLoader.item && windowInfoLoader.item.existsWindowShown)
     readonly property bool existsMaximizedWindow: (windowInfoLoader.item && windowInfoLoader.item.existsMaximizedWindow)
     readonly property bool blocksInactiveWindowActions: inactiveStateEnabled && windowInfoLoader.item && windowInfoLoader.item.focusOutsideTaskModel
-    readonly property bool dimsInactiveWindowActions: inactiveStateEnabled && windowInfoLoader.item && windowInfoLoader.item.targetObscuredByTrackedWindow
+    readonly property bool dimsInactiveWindowActions: inactiveStateEnabled && windowInfoLoader.item && (windowInfoLoader.item.targetObscuredByTrackedWindow || windowInfoLoader.item.activeFloatingWithoutMaximizedTarget)
     readonly property real inactiveDimOpacity: 0.62
     readonly property bool isLastActiveWindowPinned: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isOnAllDesktops
     readonly property bool isLastActiveWindowMaximized: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximized
@@ -324,7 +324,7 @@ PlasmoidItem {
             isActive: {
                 //!   FIXME-TEST PERIOD: Disabled because it shows an error from c++ theme when its value is changed
                 //!   and breaks in some cases the buttons coloring through the schemeFile
-                if (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions)
+                if (root.blocksInactiveWindowActions || (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions))
                     return false;
 
                 return true;
@@ -394,7 +394,7 @@ PlasmoidItem {
             isActive: {
                 //!   FIXME-TEST PERIOD: Disabled because it shows an error from c++ theme when its value is changed
                 //!   and breaks in some cases the buttons coloring through the schemeFile
-                if (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions)
+                if (root.blocksInactiveWindowActions || (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions))
                     return false;
 
                 return true;

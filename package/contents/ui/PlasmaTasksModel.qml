@@ -18,11 +18,13 @@ Item {
     property bool filterByScreen: true
     readonly property bool existsWindowActive: activeTaskItem && tasksRepeater.count > 0 && (root.perScreenActive || activeTaskItem.isActive)
     readonly property bool existsWindowShown: targetTaskItem && tasksRepeater.count > 0 && !targetTaskItem.isMinimized
+    readonly property bool hasTrackedWindow: tasksRepeater.count > 0
     property bool existsMaximizedWindow: false
     readonly property bool targetWindowIsActive: targetTaskItem && existsWindowShown && targetTaskItem.isActive
     readonly property bool hasActiveTask: activeTaskItem && activeTaskItem.isActive
-    readonly property bool focusOutsideTaskModel: targetTaskItem && existsWindowShown && !targetWindowIsActive && !hasActiveTask
+    readonly property bool focusOutsideTaskModel: hasTrackedWindow && !hasActiveTask
     readonly property bool targetObscuredByTrackedWindow: targetTaskItem && existsWindowShown && !targetWindowIsActive && hasActiveTask && activeTaskItem !== targetTaskItem
+    readonly property bool activeFloatingWithoutMaximizedTarget: targetTaskItem && existsWindowShown && !existsMaximizedWindow && targetWindowIsActive
     readonly property Item lastActiveTaskItem: targetTaskItem
     property Item activeTaskItem: null
     property Item lastMaximizedTaskItem: null
