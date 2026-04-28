@@ -13,7 +13,7 @@
         "Id": "org.kde.windowbuttons",
         "License": "GPLv2",
         "Name": "Window Buttons",
-        "Version": "0.15.0",
+        "Version": "0.16.0",
         "Website": "https://git.ciolan.net/iAdrian/plasma-applet-window-buttons6"
     },
     "Keywords": "window buttons",

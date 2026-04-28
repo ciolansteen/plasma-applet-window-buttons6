@@ -1,6 +1,6 @@
 ### CHANGELOG
 
-#### Version 0.15.0 - iAdrian fork
+#### Version 0.16.0 - iAdrian fork
 
 * Fix top-panel/global-menu behavior for borderless maximized windows: panel
   buttons now target the maximized window on the current screen even when a
