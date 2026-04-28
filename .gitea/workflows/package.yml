@@ -1,0 +1,33 @@
+name: Trigger Arch package build
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: package-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+
+      - name: Checkout ci-templates
+        uses: actions/checkout@v4
+        with:
+          repository: archRepo/ci-templates
+          path: .ci-templates
+          ref: main
+
+      - name: Trigger package build
+        uses: ./.ci-templates/trigger-arch-package
+        with:
+          package_repository: archRepo/plasma-applet-window-buttons
+          workflow_file: build.yml
+          ref: main
+          triggered_by: ${{ github.repository }}@${{ github.sha }}
+          CI_TOKEN: ${{ secrets.ORG_SECRETS_TOKEN }}
