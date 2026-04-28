@@ -16,37 +16,86 @@ Item {
     id: plasmaTasksItem
 
     property bool filterByScreen: true
-    readonly property bool existsWindowActive: lastActiveTaskItem && tasksRepeater.count > 0 && (root.perScreenActive || lastActiveTaskItem.isActive)
-    readonly property bool existsWindowShown: lastActiveTaskItem && tasksRepeater.count > 0 && !lastActiveTaskItem.isMinimized
-    property Item lastActiveTaskItem: null
+    readonly property bool existsWindowActive: activeTaskItem && tasksRepeater.count > 0 && (root.perScreenActive || activeTaskItem.isActive)
+    readonly property bool existsWindowShown: targetTaskItem && tasksRepeater.count > 0 && !targetTaskItem.isMinimized
+    property bool existsMaximizedWindow: false
+    readonly property Item targetTaskItem: {
+        if (activeTaskItem && activeTaskItem.isMaximized)
+            return activeTaskItem;
+
+        return maximizedTaskItem() || activeTaskItem;
+    }
+    readonly property Item lastActiveTaskItem: targetTaskItem
+    property Item activeTaskItem: null
+    property Item lastMaximizedTaskItem: null
+
+    function maximizedTaskItem() {
+        var bestTask = null;
+
+        for (var i = 0; i < tasksRepeater.count; ++i) {
+            var task = tasksRepeater.itemAt(i);
+
+            if (!task || !task.isMaximized || task.isMinimized)
+                continue;
+
+            if (!bestTask || task.lastActivated > bestTask.lastActivated || (task.lastActivated === bestTask.lastActivated && task.stackingOrder > bestTask.stackingOrder))
+                bestTask = task;
+        }
+
+        return bestTask;
+    }
+
+    function updateMaximizedTask() {
+        lastMaximizedTaskItem = maximizedTaskItem();
+        existsMaximizedWindow = lastMaximizedTaskItem !== null;
+    }
+
+    function actionTargetTaskItem() {
+        updateMaximizedTask();
+
+        if (activeTaskItem && activeTaskItem.isMaximized)
+            return activeTaskItem;
+
+        return lastMaximizedTaskItem || activeTaskItem;
+    }
 
     function toggleMaximized() {
-        if (lastActiveTaskItem)
-            lastActiveTaskItem.toggleMaximized();
+        var task = actionTargetTaskItem();
+
+        if (task)
+            task.toggleMaximized();
 
     }
 
     function toggleMinimized() {
-        if (lastActiveTaskItem)
-            lastActiveTaskItem.toggleMinimized();
+        var task = actionTargetTaskItem();
+
+        if (task)
+            task.toggleMinimized();
 
     }
 
     function toggleClose() {
-        if (lastActiveTaskItem)
-            lastActiveTaskItem.toggleClose();
+        var task = actionTargetTaskItem();
+
+        if (task)
+            task.toggleClose();
 
     }
 
     function togglePinToAllDesktops() {
-        if (lastActiveTaskItem)
-            lastActiveTaskItem.togglePinToAllDesktops();
+        var task = actionTargetTaskItem();
+
+        if (task)
+            task.togglePinToAllDesktops();
 
     }
 
     function toggleKeepAbove() {
-        if (lastActiveTaskItem)
-            lastActiveTaskItem.toggleKeepAbove();
+        var task = actionTargetTaskItem();
+
+        if (task)
+            task.toggleKeepAbove();
 
     }
 
@@ -92,6 +141,8 @@ Item {
                 readonly property bool isMinimizable: IsMinimizable === true ? true : false
                 readonly property bool isMaximizable: IsMaximizable === true ? true : false
                 readonly property bool isVirtualDesktopsChangeable: IsVirtualDesktopsChangeable === true ? true : false
+                readonly property double lastActivated: LastActivated ? LastActivated : 0
+                readonly property int stackingOrder: StackingOrder ? StackingOrder : 0
 
                 function modelIndex() {
                     return tasksModel.makeModelIndex(index);
@@ -118,14 +169,33 @@ Item {
                 }
 
                 onIsActiveChanged: {
-                    if (isActive)
-                        plasmaTasksItem.lastActiveTaskItem = task;
+                    if (isActive) {
+                        plasmaTasksItem.activeTaskItem = task;
+
+                        if (isMaximized)
+                            plasmaTasksItem.lastMaximizedTaskItem = task;
+                    }
 
                 }
-                Component.onDestruction: {
-                    if (plasmaTasksItem.lastActiveTaskItem === task)
-                        plasmaTasksItem.lastActiveTaskItem = null;
+                onIsMinimizedChanged: plasmaTasksItem.updateMaximizedTask()
+                onIsMaximizedChanged: plasmaTasksItem.updateMaximizedTask()
+                onLastActivatedChanged: plasmaTasksItem.updateMaximizedTask()
+                onStackingOrderChanged: plasmaTasksItem.updateMaximizedTask()
+                Component.onCompleted: {
+                    if (isActive)
+                        plasmaTasksItem.activeTaskItem = task;
 
+                    if (isMaximized && !isMinimized)
+                        plasmaTasksItem.updateMaximizedTask();
+                }
+                Component.onDestruction: {
+                    if (plasmaTasksItem.activeTaskItem === task)
+                        plasmaTasksItem.activeTaskItem = null;
+
+                    if (plasmaTasksItem.lastMaximizedTaskItem === task)
+                        plasmaTasksItem.lastMaximizedTaskItem = null;
+
+                    Qt.callLater(plasmaTasksItem.updateMaximizedTask);
                 }
             }
 

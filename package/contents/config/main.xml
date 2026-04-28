@@ -34,6 +34,8 @@ SPDX-License-Identifier: GPL-2.0-or-later
         <choice name="AlwaysVisible" />
         <choice name="ActiveWindow" />
         <choice name="ActiveMaximizedWindow" />
+        <choice name="ShownWindowExists" />
+        <choice name="MaximizedWindowExists" />
       </choices>
       <label>when the applet will be visible</label>
       <default>0</default>

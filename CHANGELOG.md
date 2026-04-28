@@ -1,5 +1,18 @@
 ### CHANGELOG
 
+#### iAdrian fork
+
+* Fix top-panel/global-menu behavior for borderless maximized windows: panel
+  buttons now target the maximized window on the current screen even when a
+  floating helper/dialog is focused above it.
+* Add `MaximizedWindowExists` visibility mode and expose it as "Maximized window
+  is shown" in Behavior settings.
+* Treat the old "Active window is maximized" visibility mode as a compatibility
+  alias for the maximized-window behavior.
+* Preserve upstream fallback behavior by targeting the active window when no
+  maximized window exists on the current screen.
+* Build with C++20 directly, matching current KDecoration3 requirements.
+
 #### Version 0.11.0
 
 * support Plasma 5.24 way of discovering themes from theme engines

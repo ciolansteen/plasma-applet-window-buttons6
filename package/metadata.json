@@ -8,13 +8,13 @@
             }
         ],
         "Category": "Windows and Tasks",
-        "Description": "Window buttons for your panels",
+        "Description": "Window buttons for Plasma panels",
         "Icon": "focus-windows",
         "Id": "org.kde.windowbuttons",
         "License": "GPLv2",
         "Name": "Window Buttons",
         "Version": "0.11.1",
-        "Website": "https://github.com/psifidotos/applet-window-buttons"
+        "Website": "https://git.ciolan.net/iAdrian/plasma-applet-window-buttons6"
     },
     "Keywords": "window buttons",
     "X-Plasma-API": "declarativeappletscript",

@@ -20,6 +20,7 @@ PlasmoidItem {
     property int animatedMinimumWidth: minimumWidth
     property int animatedMinimumHeight: minimumHeight
     property int screen: plasmoid.containment.screen
+    readonly property bool maximizedWindowVisibility: visibility === AppletDecoration.Types.ActiveMaximizedWindow || visibility === AppletDecoration.Types.MaximizedWindowExists
     readonly property bool inEditMode: plasmoid.userConfiguring || plasmoid.containment.corona.editMode
     readonly property bool mustHide: {
         if (visibility === AppletDecoration.Types.AlwaysVisible || inEditMode)
@@ -28,7 +29,7 @@ PlasmoidItem {
         if (visibility === AppletDecoration.Types.ActiveWindow && !existsWindowActive)
             return true;
 
-        if (visibility === AppletDecoration.Types.ActiveMaximizedWindow && (!isLastActiveWindowMaximized || !existsWindowActive))
+        if (maximizedWindowVisibility && !existsMaximizedWindow)
             return true;
 
         if (visibility === AppletDecoration.Types.ShownWindowExists && !existsWindowShown)
@@ -84,6 +85,7 @@ PlasmoidItem {
     //! make sure that on startup it will always be shown
     readonly property bool existsWindowActive: (windowInfoLoader.item && windowInfoLoader.item.existsWindowActive)
     readonly property bool existsWindowShown: (windowInfoLoader.item && windowInfoLoader.item.existsWindowShown)
+    readonly property bool existsMaximizedWindow: (windowInfoLoader.item && windowInfoLoader.item.existsMaximizedWindow)
     readonly property bool isLastActiveWindowPinned: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isOnAllDesktops
     readonly property bool isLastActiveWindowMaximized: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximized
     readonly property bool isLastActiveWindowKeepAbove: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isKeepAbove

@@ -78,13 +78,13 @@ KCM.SimpleKCM {
         }
 
         QQC2.RadioButton {
-            id: activeMaximizedBtn
+            id: maximizedWindowBtn
             QQC2.ButtonGroup.group: visibilityBtnGroup
-            text: i18n("Active window is maximized")
-            checked: root.visibility === AppletDecoration.Types.ActiveMaximizedWindow
+            text: i18n("Maximized window is shown")
+            checked: root.visibility === AppletDecoration.Types.ActiveMaximizedWindow || root.visibility === AppletDecoration.Types.MaximizedWindowExists
             onCheckedChanged: {
                 if (checked)
-                    root.visibility = AppletDecoration.Types.ActiveMaximizedWindow;
+                    root.visibility = AppletDecoration.Types.MaximizedWindowExists;
 
             }
         }
