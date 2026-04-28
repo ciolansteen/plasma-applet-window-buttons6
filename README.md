@@ -47,6 +47,11 @@ Changes:
   by the panel buttons, not whichever floating window currently has focus. If
   the maximized target window is inactive, the panel buttons use inactive
   decoration colors; when that target window is active, they use active colors.
+- If focus moves to a special window that is outside Plasma's task model, such
+  as Yakuake, the represented window buttons become truly inactive and clicks do
+  nothing. If focus moves to a normal floating window that Plasma tracks, the
+  represented buttons stay usable but are dimmed to show that their target is
+  not focused.
 - Button release and hover events are forwarded to KDecoration with corrected
   coordinates, avoiding stale pointer state caused by mismatched event geometry.
 - Synthetic Qt input events use Qt 6 constructors while keeping

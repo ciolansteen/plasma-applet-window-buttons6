@@ -18,6 +18,9 @@
   consistently.
 * Treat full-decoration damage from KDecoration as requiring a button repaint,
   fixing stale Breeze active/inactive colors that only refreshed after hover.
+* Distinguish special out-of-task-model focus, such as Yakuake, from normal
+  floating windows: special focus makes buttons inactive and non-clickable,
+  while tracked floating focus keeps them usable but dimmed.
 * Fix stale pointer state by forwarding corrected release/hover coordinates to
   KDecoration.
 * Use Qt 6 input-event constructors for synthetic button events while preserving

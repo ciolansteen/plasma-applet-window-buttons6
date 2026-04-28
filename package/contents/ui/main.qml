@@ -86,6 +86,9 @@ PlasmoidItem {
     readonly property bool existsWindowActive: (windowInfoLoader.item && windowInfoLoader.item.existsWindowActive)
     readonly property bool existsWindowShown: (windowInfoLoader.item && windowInfoLoader.item.existsWindowShown)
     readonly property bool existsMaximizedWindow: (windowInfoLoader.item && windowInfoLoader.item.existsMaximizedWindow)
+    readonly property bool blocksInactiveWindowActions: inactiveStateEnabled && windowInfoLoader.item && windowInfoLoader.item.focusOutsideTaskModel
+    readonly property bool dimsInactiveWindowActions: inactiveStateEnabled && windowInfoLoader.item && windowInfoLoader.item.targetObscuredByTrackedWindow
+    readonly property real inactiveDimOpacity: 0.62
     readonly property bool isLastActiveWindowPinned: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isOnAllDesktops
     readonly property bool isLastActiveWindowMaximized: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximized
     readonly property bool isLastActiveWindowActive: windowInfoLoader.item && windowInfoLoader.item.targetWindowIsActive
@@ -141,6 +144,9 @@ PlasmoidItem {
     }
 
     function performActiveWindowAction(windowOperation) {
+        if (blocksInactiveWindowActions)
+            return;
+
         if (windowOperation === AppletDecoration.Types.ActionClose)
             windowInfoLoader.item.toggleClose();
         else if (windowOperation === AppletDecoration.Types.ToggleMaximize)
@@ -318,7 +324,7 @@ PlasmoidItem {
             isActive: {
                 //!   FIXME-TEST PERIOD: Disabled because it shows an error from c++ theme when its value is changed
                 //!   and breaks in some cases the buttons coloring through the schemeFile
-                if (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive)
+                if (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions)
                     return false;
 
                 return true;
@@ -328,7 +334,8 @@ PlasmoidItem {
             isKeepAbove: root.isLastActiveWindowKeepAbove
             localX: x
             localY: y
-            opacity: isVisible ? 1 : 0
+            enabled: !root.blocksInactiveWindowActions
+            opacity: isVisible ? (root.dimsInactiveWindowActions ? root.inactiveDimOpacity : 1) : 0
             visible: (isVisible && !root.isEmptySpaceEnabled) || root.isEmptySpaceEnabled
             onClicked: {
                 root.performActiveWindowAction(windowOperation);
@@ -387,7 +394,7 @@ PlasmoidItem {
             isActive: {
                 //!   FIXME-TEST PERIOD: Disabled because it shows an error from c++ theme when its value is changed
                 //!   and breaks in some cases the buttons coloring through the schemeFile
-                if (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive)
+                if (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions)
                     return false;
 
                 return true;
@@ -399,7 +406,8 @@ PlasmoidItem {
             auroraeTheme: auroraeThemeEngine
             monochromeIconsEnabled: auroraeThemeEngine.hasMonochromeIcons
             monochromeIconsColor: "transparent"
-            opacity: isVisible ? 1 : 0
+            enabled: !root.blocksInactiveWindowActions
+            opacity: isVisible ? (root.dimsInactiveWindowActions ? root.inactiveDimOpacity : 1) : 0
             visible: (isVisible && !root.isEmptySpaceEnabled) || root.isEmptySpaceEnabled
             onClicked: {
                 root.performActiveWindowAction(windowOperation);
