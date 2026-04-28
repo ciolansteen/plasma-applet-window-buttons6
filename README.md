@@ -43,16 +43,12 @@ Changes:
 - Maximized-window detection uses Plasma's `TaskManager.TasksModel` after its
   existing screen, virtual desktop, and activity filters. With "Show only for
   windows in current screen" enabled, visibility and actions are screen-local.
-- "Draw buttons inactive state when needed" now follows the window represented
+- "Draw buttons inactive state when needed" is evaluated against the window represented
   by the panel buttons, not whichever floating window currently has focus. If
   the maximized target window is inactive, the panel buttons use inactive
   decoration colors; when that target window is active, they use active colors.
-- Target-window active state is tracked explicitly by the task model and button
-  items repaint directly on decoration state changes, so active/inactive colors
-  update immediately instead of waiting for pointer hover.
-- Button hover/press events are forwarded to KDecoration with corrected
-  coordinates and explicit repaint requests so hover colors do not remain stuck
-  after leaving or clicking a button.
+- Button release and hover events are forwarded to KDecoration with corrected
+  coordinates, avoiding stale pointer state caused by mismatched event geometry.
 
 The goal is not to make a generic fork with every possible policy knob. It is to
 provide predictable defaults for a Plasma setup where maximized windows are

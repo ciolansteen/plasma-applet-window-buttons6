@@ -11,12 +11,10 @@
   alias for the maximized-window behavior.
 * Preserve upstream fallback behavior by targeting the active window when no
   maximized window exists on the current screen.
-* Fix inactive button coloring so it follows the represented maximized window
+* Evaluate inactive button state against the represented maximized window
   instead of the focused floating window.
-* Track the target window's active state explicitly and repaint buttons directly
-  so active/inactive colors update immediately when focus changes.
-* Fix stuck hover/press coloring by forwarding corrected release/hover
-  coordinates to KDecoration and repainting after pointer/focus state changes.
+* Fix stale pointer state by forwarding corrected release/hover coordinates to
+  KDecoration.
 * Build with C++20 directly, matching current KDecoration3 requirements.
 
 #### Version 0.11.0

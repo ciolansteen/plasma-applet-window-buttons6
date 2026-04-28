@@ -414,11 +414,13 @@ void PreviewButtonItem::syncInternalGeometry()
 
 void PreviewButtonItem::onButtonDamaged()
 {
-    update();
-
     if (m_sharedDecoration && m_sharedDecoration->decoration())
     {
         emit m_sharedDecoration->decoration()->damaged(m_visualGeometry);
+    }
+    else
+    {
+        update();
     }
 }
 
@@ -464,7 +466,6 @@ void PreviewButtonItem::mousePressEvent(QMouseEvent *event)
     QMouseEvent e(event->type(), m_visualGeometry.center(), event->button(), event->buttons(), event->modifiers());
 
     QCoreApplication::instance()->sendEvent(m_button, &e);
-    onButtonDamaged();
 }
 
 void PreviewButtonItem::mouseReleaseEvent(QMouseEvent *event)
@@ -486,8 +487,6 @@ void PreviewButtonItem::mouseReleaseEvent(QMouseEvent *event)
     {
         emit clicked();
     }
-
-    onButtonDamaged();
 }
 
 void PreviewButtonItem::mouseMoveEvent(QMouseEvent *event)
@@ -502,7 +501,6 @@ void PreviewButtonItem::mouseMoveEvent(QMouseEvent *event)
     QMouseEvent e(event->type(), m_visualGeometry.center(), event->button(), event->buttons(), event->modifiers());
 
     QCoreApplication::instance()->sendEvent(m_button, &e);
-    onButtonDamaged();
 }
 
 void PreviewButtonItem::hoverEnterEvent(QHoverEvent *event)
@@ -518,7 +516,6 @@ void PreviewButtonItem::hoverEnterEvent(QHoverEvent *event)
                   event->modifiers());
 
     QCoreApplication::instance()->sendEvent(m_button, &e);
-    onButtonDamaged();
 }
 
 void PreviewButtonItem::hoverLeaveEvent(QHoverEvent *event)
@@ -533,7 +530,6 @@ void PreviewButtonItem::hoverLeaveEvent(QHoverEvent *event)
     QHoverEvent e(event->type(), QPoint(-5, -5), m_visualGeometry.center(), event->modifiers());
 
     QCoreApplication::instance()->sendEvent(m_button, &e);
-    onButtonDamaged();
 }
 
 void PreviewButtonItem::hoverMoveEvent(QHoverEvent *event)
@@ -554,7 +550,6 @@ void PreviewButtonItem::hoverMoveEvent(QHoverEvent *event)
     QHoverEvent e(event->type(), newPos, oldPos, event->modifiers());
 
     QCoreApplication::instance()->sendEvent(m_button, &e);
-    onButtonDamaged();
 }
 
 void PreviewButtonItem::focusOutEvent(QFocusEvent *event)
@@ -565,5 +560,4 @@ void PreviewButtonItem::focusOutEvent(QFocusEvent *event)
     }
 
     QCoreApplication::instance()->sendEvent(m_button, event);
-    onButtonDamaged();
 }

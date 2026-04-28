@@ -19,8 +19,12 @@ Item {
     readonly property bool existsWindowActive: activeTaskItem && tasksRepeater.count > 0 && (root.perScreenActive || activeTaskItem.isActive)
     readonly property bool existsWindowShown: targetTaskItem && tasksRepeater.count > 0 && !targetTaskItem.isMinimized
     property bool existsMaximizedWindow: false
-    property bool targetWindowIsActive: false
-    property Item targetTaskItem: null
+    readonly property Item targetTaskItem: {
+        if (activeTaskItem && activeTaskItem.isMaximized)
+            return activeTaskItem;
+
+        return maximizedTaskItem() || activeTaskItem;
+    }
     readonly property Item lastActiveTaskItem: targetTaskItem
     property Item activeTaskItem: null
     property Item lastMaximizedTaskItem: null
@@ -44,13 +48,6 @@ Item {
     function updateMaximizedTask() {
         lastMaximizedTaskItem = maximizedTaskItem();
         existsMaximizedWindow = lastMaximizedTaskItem !== null;
-
-        if (activeTaskItem && activeTaskItem.isMaximized)
-            targetTaskItem = activeTaskItem;
-        else
-            targetTaskItem = lastMaximizedTaskItem || activeTaskItem;
-
-        targetWindowIsActive = targetTaskItem ? targetTaskItem.isActive : false;
     }
 
     function actionTargetTaskItem() {
@@ -179,7 +176,6 @@ Item {
                             plasmaTasksItem.lastMaximizedTaskItem = task;
                     }
 
-                    plasmaTasksItem.updateMaximizedTask();
                 }
                 onIsMinimizedChanged: plasmaTasksItem.updateMaximizedTask()
                 onIsMaximizedChanged: plasmaTasksItem.updateMaximizedTask()
@@ -189,7 +185,8 @@ Item {
                     if (isActive)
                         plasmaTasksItem.activeTaskItem = task;
 
-                    plasmaTasksItem.updateMaximizedTask();
+                    if (isMaximized && !isMinimized)
+                        plasmaTasksItem.updateMaximizedTask();
                 }
                 Component.onDestruction: {
                     if (plasmaTasksItem.activeTaskItem === task)
