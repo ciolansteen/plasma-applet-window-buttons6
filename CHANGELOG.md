@@ -16,6 +16,9 @@
 * Keep the represented task as explicit state so focus, minimize, maximize, and
   stacking changes update visibility, button actions, and inactive colors
   consistently.
+* Request button and decoration repaint through KDecoration update APIs when the
+  represented active/inactive state changes, so colors no longer wait for hover
+  before refreshing.
 * Fix stale pointer state by forwarding corrected release/hover coordinates to
   KDecoration.
 * Use Qt 6 input-event constructors for synthetic button events while preserving
