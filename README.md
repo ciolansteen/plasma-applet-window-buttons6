@@ -47,6 +47,9 @@ Changes:
   by the panel buttons, not whichever floating window currently has focus. If
   the maximized target window is inactive, the panel buttons use inactive
   decoration colors; when that target window is active, they use active colors.
+- Target-window active state is tracked explicitly by the task model and button
+  items repaint directly on decoration state changes, so active/inactive colors
+  update immediately instead of waiting for pointer hover.
 - Button hover/press events are forwarded to KDecoration with corrected
   coordinates and explicit repaint requests so hover colors do not remain stuck
   after leaving or clicking a button.

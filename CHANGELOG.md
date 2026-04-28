@@ -13,6 +13,8 @@
   maximized window exists on the current screen.
 * Fix inactive button coloring so it follows the represented maximized window
   instead of the focused floating window.
+* Track the target window's active state explicitly and repaint buttons directly
+  so active/inactive colors update immediately when focus changes.
 * Fix stuck hover/press coloring by forwarding corrected release/hover
   coordinates to KDecoration and repainting after pointer/focus state changes.
 * Build with C++20 directly, matching current KDecoration3 requirements.

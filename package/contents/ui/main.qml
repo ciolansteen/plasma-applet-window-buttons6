@@ -86,9 +86,9 @@ PlasmoidItem {
     readonly property bool existsWindowActive: (windowInfoLoader.item && windowInfoLoader.item.existsWindowActive)
     readonly property bool existsWindowShown: (windowInfoLoader.item && windowInfoLoader.item.existsWindowShown)
     readonly property bool existsMaximizedWindow: (windowInfoLoader.item && windowInfoLoader.item.existsMaximizedWindow)
+    readonly property bool targetWindowIsActive: (windowInfoLoader.item && windowInfoLoader.item.targetWindowIsActive)
     readonly property bool isLastActiveWindowPinned: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isOnAllDesktops
     readonly property bool isLastActiveWindowMaximized: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximized
-    readonly property bool isLastActiveWindowActive: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isActive
     readonly property bool isLastActiveWindowKeepAbove: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isKeepAbove
     readonly property bool isLastActiveWindowClosable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isClosable
     readonly property bool isLastActiveWindowMaximizable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximizable
@@ -318,7 +318,7 @@ PlasmoidItem {
             isActive: {
                 //!   FIXME-TEST PERIOD: Disabled because it shows an error from c++ theme when its value is changed
                 //!   and breaks in some cases the buttons coloring through the schemeFile
-                if (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive)
+                if (root.inactiveStateEnabled && root.existsWindowShown && !root.targetWindowIsActive)
                     return false;
 
                 return true;
@@ -387,7 +387,7 @@ PlasmoidItem {
             isActive: {
                 //!   FIXME-TEST PERIOD: Disabled because it shows an error from c++ theme when its value is changed
                 //!   and breaks in some cases the buttons coloring through the schemeFile
-                if (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive)
+                if (root.inactiveStateEnabled && root.existsWindowShown && !root.targetWindowIsActive)
                     return false;
 
                 return true;
