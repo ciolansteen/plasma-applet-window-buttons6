@@ -339,7 +339,11 @@ PlasmoidItem {
             isActive: {
                 //!   FIXME-TEST PERIOD: Disabled because it shows an error from c++ theme when its value is changed
                 //!   and breaks in some cases the buttons coloring through the schemeFile
-                if (root.blocksInactiveWindowActions || (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions))
+                // Per-screen: when perScreenActive is on and a local window is shown,
+                // keep buttons bright even if global focus moved to another screen.
+                var perScreenLocalContext = root.perScreenActive && root.existsWindowShown;
+
+                if (root.blocksInactiveWindowActions || (!perScreenLocalContext && root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions))
                     return false;
 
                 return true;
@@ -409,7 +413,11 @@ PlasmoidItem {
             isActive: {
                 //!   FIXME-TEST PERIOD: Disabled because it shows an error from c++ theme when its value is changed
                 //!   and breaks in some cases the buttons coloring through the schemeFile
-                if (root.blocksInactiveWindowActions || (root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions))
+                // Per-screen: when perScreenActive is on and a local window is shown,
+                // keep buttons bright even if global focus moved to another screen.
+                var perScreenLocalContext = root.perScreenActive && root.existsWindowShown;
+
+                if (root.blocksInactiveWindowActions || (!perScreenLocalContext && root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions))
                     return false;
 
                 return true;
