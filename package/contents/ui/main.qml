@@ -89,7 +89,7 @@ PlasmoidItem {
     readonly property bool existsWindowShown: (windowInfoLoader.item && windowInfoLoader.item.existsWindowShown)
     readonly property bool existsMaximizedWindow: (windowInfoLoader.item && windowInfoLoader.item.existsMaximizedWindow)
     readonly property bool blocksInactiveWindowActions: inactiveStateEnabled && windowInfoLoader.item && windowInfoLoader.item.focusOutsideTaskModel
-    readonly property bool dimsInactiveWindowActions: inactiveStateEnabled && windowInfoLoader.item && (windowInfoLoader.item.targetObscuredByTrackedWindow || windowInfoLoader.item.activeFloatingWithoutMaximizedTarget)
+    readonly property bool dimsInactiveWindowActions: inactiveStateEnabled && windowInfoLoader.item && windowInfoLoader.item.targetObscuredByTrackedWindow
     readonly property real inactiveDimOpacity: 0.62
     readonly property bool isLastActiveWindowPinned: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isOnAllDesktops
     readonly property bool isLastActiveWindowMaximized: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximized

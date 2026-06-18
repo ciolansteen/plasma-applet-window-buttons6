@@ -22,7 +22,7 @@ Item {
     property bool existsMaximizedWindow: false
     readonly property bool targetWindowIsActive: targetTaskItem && existsWindowShown && targetTaskItem.isActive
     readonly property bool hasActiveTask: activeTaskItem && activeTaskItem.isActive
-    readonly property bool focusOutsideTaskModel: hasTrackedWindow && !hasActiveTask
+    readonly property bool focusOutsideTaskModel: hasTrackedWindow && !hasActiveTask && !targetTaskItem
     readonly property bool targetObscuredByTrackedWindow: targetTaskItem && existsWindowShown && !targetWindowIsActive && hasActiveTask && activeTaskItem !== targetTaskItem
     readonly property bool activeFloatingWithoutMaximizedTarget: targetTaskItem && existsWindowShown && !existsMaximizedWindow && targetWindowIsActive
     readonly property Item lastActiveTaskItem: targetTaskItem
