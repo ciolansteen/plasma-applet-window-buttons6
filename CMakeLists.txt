@@ -24,7 +24,7 @@ include(CheckIncludeFiles)
 
 find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS DBus Gui Qml Quick)
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS CoreAddons Config Declarative Package Svg)
-find_package(Plasma "6.0" REQUIRED)
+find_package(Plasma "6.4" REQUIRED)
 find_package(KDecoration3 ${KDecoration3_MIN_VERSION} REQUIRED)
 
 set(KDecoration3_VERSION_MAJOR ${KDecoration3_VERSION_MAJOR})

@@ -26,13 +26,7 @@ PlasmoidItem {
         if (visibility === AppletDecoration.Types.AlwaysVisible || inEditMode)
             return false;
 
-        if (visibility === AppletDecoration.Types.ActiveWindow && !existsWindowActive)
-            return true;
-
-        if (maximizedWindowVisibility && !existsMaximizedWindow)
-            return true;
-
-        if (visibility === AppletDecoration.Types.ShownWindowExists && !existsWindowShown)
+        if (!lastActiveTaskItem || !existsWindowShown || !isLastActiveWindowBorderless)
             return true;
 
         return false;
@@ -98,6 +92,7 @@ PlasmoidItem {
     readonly property bool isLastActiveWindowClosable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isClosable
     readonly property bool isLastActiveWindowMaximizable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximizable
     readonly property bool isLastActiveWindowMinimizable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMinimizable
+    readonly property bool isLastActiveWindowBorderless: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.hasNoBorder
     readonly property bool isLastActiveWindowVirtualDesktopsChangeable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isVirtualDesktopsChangeable
     property bool hasDesktopsButton: false
     property bool hasMaximizedButton: false

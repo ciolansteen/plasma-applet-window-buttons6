@@ -8,8 +8,8 @@ which mirrors <https://github.com/moodyhunter/applet-window-buttons6>.
 
 This fork keeps the same Plasma applet id (`org.kde.windowbuttons`) so it can
 replace the upstream package without rebuilding existing panels, but changes the
-window selection semantics to fit global-menu/top-panel setups where maximized
-windows are borderless and the panel acts as their titlebar.
+window selection semantics to fit global-menu/top-panel setups where the panel
+acts as the titlebar for any borderless window.
 
 ## Fixed problem
 
@@ -29,6 +29,14 @@ used as a fallback when no maximized window exists.
 
 Changes:
 
+- Outside Always Visible and panel edit mode, controls are shown exactly when the
+  represented window has KWin's `HasNoBorder` state. Toggling the native titlebar
+  with Meta+B therefore updates the panel immediately for floating, tiled, and
+  maximized windows, without duplicate controls.
+- Borderless targets are preferred in this order: active borderless, maximized
+  borderless, then most recently activated/stacked borderless. This preserves
+  the maximized-window target behind a focused titled helper while also
+  supporting borderless floating and tiled windows.
 - Window button actions prefer the maximized window on the current screen. If a
   floating dialog or helper window is focused above a maximized window, the
   panel buttons still operate on the maximized window they visually represent.
@@ -76,7 +84,7 @@ Minimum build/runtime expectations:
 
 - Qt >= 6.6
 - KDE Frameworks >= 6.0
-- Plasma >= 6.0
+- Plasma >= 6.4 (for the Task Manager `HasNoBorder` role)
 - KDecoration3 >= 6.3
 - CMake >= 3.20
 - C++20 compiler

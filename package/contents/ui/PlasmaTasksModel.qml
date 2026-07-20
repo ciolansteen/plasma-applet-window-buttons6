@@ -28,6 +28,7 @@ Item {
     readonly property Item lastActiveTaskItem: targetTaskItem
     property Item activeTaskItem: null
     property Item lastMaximizedTaskItem: null
+    property Item lastBorderlessTaskItem: null
     property Item shownTaskItem: null
     property Item targetTaskItem: null
 
@@ -63,10 +64,43 @@ Item {
         return bestTask;
     }
 
+    function borderlessTaskItem(maximizedOnly) {
+        var bestTask = null;
+
+        for (var i = 0; i < tasksRepeater.count; ++i) {
+            var task = tasksRepeater.itemAt(i);
+
+            if (!task || !task.hasNoBorder || task.isMinimized || (maximizedOnly && !task.isMaximized))
+                continue;
+
+            if (!bestTask || task.lastActivated > bestTask.lastActivated || (task.lastActivated === bestTask.lastActivated && task.stackingOrder > bestTask.stackingOrder))
+                bestTask = task;
+        }
+
+        return bestTask;
+    }
+
     function updateWindowState() {
         shownTaskItem = bestShownTaskItem();
         lastMaximizedTaskItem = maximizedTaskItem();
+        lastBorderlessTaskItem = borderlessTaskItem(false);
         existsMaximizedWindow = lastMaximizedTaskItem !== null;
+
+        if (activeTaskItem && activeTaskItem.hasNoBorder && !activeTaskItem.isMinimized) {
+            targetTaskItem = activeTaskItem;
+            return;
+        }
+
+        var borderlessMaximizedTaskItem = borderlessTaskItem(true);
+        if (borderlessMaximizedTaskItem) {
+            targetTaskItem = borderlessMaximizedTaskItem;
+            return;
+        }
+
+        if (lastBorderlessTaskItem) {
+            targetTaskItem = lastBorderlessTaskItem;
+            return;
+        }
 
         if (activeTaskItem && activeTaskItem.isMaximized && !activeTaskItem.isMinimized) {
             targetTaskItem = activeTaskItem;
@@ -168,6 +202,7 @@ Item {
                 readonly property bool isMinimized: IsMinimized === true ? true : false
                 readonly property bool isMaximized: IsMaximized === true ? true : false
                 readonly property bool isActive: IsActive === true ? true : false
+                readonly property bool hasNoBorder: HasNoBorder === true
                 readonly property bool isOnAllDesktops: IsOnAllVirtualDesktops === true ? true : false
                 readonly property bool isKeepAbove: IsKeepAbove === true ? true : false
                 readonly property bool isClosable: IsClosable === true ? true : false
@@ -207,6 +242,7 @@ Item {
                 }
                 onIsMinimizedChanged: plasmaTasksItem.updateWindowState()
                 onIsMaximizedChanged: plasmaTasksItem.updateWindowState()
+                onHasNoBorderChanged: plasmaTasksItem.updateWindowState()
                 onLastActivatedChanged: plasmaTasksItem.updateWindowState()
                 onStackingOrderChanged: plasmaTasksItem.updateWindowState()
                 Component.onCompleted: {
@@ -221,6 +257,9 @@ Item {
 
                     if (plasmaTasksItem.lastMaximizedTaskItem === task)
                         plasmaTasksItem.lastMaximizedTaskItem = null;
+
+                    if (plasmaTasksItem.lastBorderlessTaskItem === task)
+                        plasmaTasksItem.lastBorderlessTaskItem = null;
 
                     if (plasmaTasksItem.shownTaskItem === task)
                         plasmaTasksItem.shownTaskItem = null;

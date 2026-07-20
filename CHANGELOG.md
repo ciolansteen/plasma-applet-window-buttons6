@@ -2,6 +2,13 @@
 
 #### Version 0.16.0 - iAdrian fork
 
+* Follow KWin's `HasNoBorder` state dynamically: show panel controls for
+  borderless floating, tiled, and maximized windows, and hide them as soon as a
+  native titlebar is enabled. Always Visible and panel edit mode remain explicit
+  overrides.
+* Prefer active, then maximized, then most-recent borderless targets while
+  preserving the existing fallback target for window state and actions.
+* Require Plasma 6.4 or newer for the Task Manager `HasNoBorder` role.
 * Fix top-panel/global-menu behavior for borderless maximized windows: panel
   buttons now target the maximized window on the current screen even when a
   floating helper/dialog is focused above it.

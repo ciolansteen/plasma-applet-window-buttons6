@@ -2,7 +2,9 @@
 
 ## Building from source
 
-Install the Plasma 6 / KDecoration3 development dependencies first.
+Install the Plasma 6 / KDecoration3 development dependencies first. Plasma 6.4
+or newer is required for the Task Manager `HasNoBorder` role used to follow
+native-titlebar changes.
 
 ### Arch
 
