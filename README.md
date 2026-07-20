@@ -1,8 +1,11 @@
 # Window Buttons Applet
 
-This fork is maintained at <https://git.ciolan.net/iAdrian/plasma-applet-window-buttons6>.
-It is based on <https://git.ciolan.net/github-mirrors/applet-window-buttons6>,
-which mirrors <https://github.com/moodyhunter/applet-window-buttons6>.
+An actively maintained Plasma 6 fork of
+[`moodyhunter/applet-window-buttons6`](https://github.com/moodyhunter/applet-window-buttons6),
+focused on reliable top-panel window controls for borderless windows.
+
+Use [GitHub Issues](https://github.com/ciolansteen/plasma-applet-window-buttons6/issues)
+for bug reports and feature requests.
 
 ## What differs from upstream
 
