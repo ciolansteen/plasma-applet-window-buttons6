@@ -1,53 +1,43 @@
-name: Mirror sanitized source to GitHub
+name: Mirror exact refs to GitHub
 
 on:
   push:
-    branches: [master]
   workflow_dispatch:
 
 concurrency:
-  group: github-mirror-master
+  group: github-mirror
   cancel-in-progress: false
 
 jobs:
   mirror:
     runs-on: self-hosted
     steps:
-      - name: Checkout Gitea source
+      - name: Checkout canonical Gitea source
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           persist-credentials: false
 
-      - name: Configure the write-scoped GitHub deploy key
+      - name: Mirror branches and tags exactly
         shell: bash
         env:
           GITHUB_MIRROR_DEPLOY_KEY: ${{ secrets.MIRROR_DEPLOY_KEY }}
         run: |
           set -euo pipefail
           test -n "$GITHUB_MIRROR_DEPLOY_KEY"
-          install -d -m 700 "$HOME/.ssh"
-          printf '%s\n' "$GITHUB_MIRROR_DEPLOY_KEY" > "$HOME/.ssh/github_mirror_ed25519"
-          chmod 600 "$HOME/.ssh/github_mirror_ed25519"
-          ssh-keyscan -t ed25519 github.com >> "$HOME/.ssh/known_hosts"
-          cat >> "$HOME/.ssh/config" <<'EOF'
-          Host github.com
-            IdentityFile ~/.ssh/github_mirror_ed25519
-            IdentitiesOnly yes
-            StrictHostKeyChecking yes
-          EOF
-          chmod 600 "$HOME/.ssh/config"
 
-      - name: Build and publish the sanitized state mirror
-        shell: bash
-        run: |
-          set -euo pipefail
-          target_dir="$(mktemp -d)"
-          trap 'rm -rf "$target_dir"' EXIT
-          git clone --branch master --single-branch \
-            git@github.com:ciolansteen/plasma-applet-window-buttons6.git \
-            "$target_dir"
-          python3 .gitea/scripts/mirror_github.py \
-            --source "$GITHUB_WORKSPACE" \
-            --target "$target_dir" \
-            --source-sha "${{ github.sha }}"
+          key_file="$(mktemp)"
+          known_hosts="$(mktemp)"
+          trap 'rm -f "$key_file" "$known_hosts"' EXIT
+          printf '%s\n' "$GITHUB_MIRROR_DEPLOY_KEY" > "$key_file"
+          chmod 600 "$key_file"
+          ssh-keyscan -t ed25519 github.com > "$known_hosts"
+          export GIT_SSH_COMMAND="ssh -i $key_file -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$known_hosts"
+
+          git fetch --prune origin \
+            '+refs/heads/*:refs/remotes/gitea/*' \
+            '+refs/tags/*:refs/tags/*'
+          git remote add github git@github.com:ciolansteen/plasma-applet-window-buttons6.git
+          git push --prune --force github \
+            '+refs/remotes/gitea/*:refs/heads/*' \
+            '+refs/tags/*:refs/tags/*'
