@@ -1,0 +1,51 @@
+name: Mirror sanitized source to GitHub
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: github-mirror-master
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Gitea source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Configure the write-scoped GitHub deploy key
+        shell: bash
+        env:
+          GITHUB_MIRROR_DEPLOY_KEY: ${{ secrets.GITHUB_MIRROR_DEPLOY_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$GITHUB_MIRROR_DEPLOY_KEY"
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$GITHUB_MIRROR_DEPLOY_KEY" > "$HOME/.ssh/github_mirror_ed25519"
+          chmod 600 "$HOME/.ssh/github_mirror_ed25519"
+          ssh-keyscan -t ed25519 github.com >> "$HOME/.ssh/known_hosts"
+          cat >> "$HOME/.ssh/config" <<'EOF'
+          Host github.com
+            IdentityFile ~/.ssh/github_mirror_ed25519
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+          EOF
+          chmod 600 "$HOME/.ssh/config"
+
+      - name: Build and publish the sanitized state mirror
+        shell: bash
+        run: |
+          set -euo pipefail
+          target_dir="$(mktemp -d)"
+          trap 'rm -rf "$target_dir"' EXIT
+          git clone --branch master --single-branch \
+            git@github.com:ciolansteen/plasma-applet-window-buttons6.git \
+            "$target_dir"
+          python3 .gitea/scripts/mirror_github.py \
+            --source "$GITHUB_WORKSPACE" \
+            --target "$target_dir" \
+            --source-sha "${{ github.sha }}"

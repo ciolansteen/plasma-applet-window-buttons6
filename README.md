@@ -53,12 +53,12 @@ Changes:
   windows in current screen" enabled, visibility and actions are screen-local.
 - "Draw buttons inactive state when needed" is evaluated against the window represented
   by the panel buttons, not whichever floating window currently has focus. If
-  the target window is inactive, the panel buttons use inactive decoration colors; 
+  the target window is inactive, the panel buttons use inactive decoration colors;
   when that target window is active, they use active colors.
 - If focus moves to a special window that is outside Plasma's task model, such
-  as (eg: Yakuake or any other dialog), the represented window buttons become 
-  truly inactive and clicks do nothing. If focus moves to a normal floating window that 
-  Plasma tracks, the  represented buttons stay usable but are dimmed to show that their 
+  as (eg: Yakuake or any other dialog), the represented window buttons become
+  truly inactive and clicks do nothing. If focus moves to a normal floating window that
+  Plasma tracks, the represented buttons stay usable but are dimmed to show that their
   target is not focused.
 - Button release and hover events are forwarded to KDecoration with corrected
   coordinates, avoiding stale pointer state caused by mismatched event geometry.
