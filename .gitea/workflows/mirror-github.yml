@@ -20,7 +20,7 @@ jobs:
       - name: Configure the write-scoped GitHub deploy key
         shell: bash
         env:
-          GITHUB_MIRROR_DEPLOY_KEY: ${{ secrets.GITHUB_MIRROR_DEPLOY_KEY }}
+          GITHUB_MIRROR_DEPLOY_KEY: ${{ secrets.MIRROR_DEPLOY_KEY }}
         run: |
           set -euo pipefail
           test -n "$GITHUB_MIRROR_DEPLOY_KEY"
