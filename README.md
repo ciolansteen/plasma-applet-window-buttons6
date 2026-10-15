@@ -119,6 +119,14 @@ Avoid injecting a rebuilt native QML module into a running plasmashell through a
 local import override. For native plugin experiments, install a normal package
 or use an isolated Plasma/plasmoid test session.
 
+### Plasma 6.8 rebuild
+
+The signed Arch package `1:0.16.0.r11.g19fc7f7-2` was rebuilt against Plasma 6.8.
+Older binaries linked to `libPlasma.so.7` cannot load on the new
+`libPlasma.so.8` ABI. This is a binary rebuild, not a change to window-targeting
+behavior. See [installation and upgrade troubleshooting](INSTALLATION.md#after-a-plasma-upgrade)
+and the [rolling Arch packages](https://github.com/ciolansteen/plasma-applet-window-buttons6/releases/tag/arch-packages).
+
 ## Audit notes
 
 - Keep the fork aligned with KDE's KDecoration3 direction: avoid KDecoration2
