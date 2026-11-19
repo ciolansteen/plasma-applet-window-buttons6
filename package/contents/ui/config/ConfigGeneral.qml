@@ -8,14 +8,14 @@
 */
 
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls as QQC2
+import QtQuick.Layouts
+import org.kde.appletdecoration as AppletDecoration
 import org.kde.kcmutils as KCM
 import org.kde.kirigami as Kirigami
 import org.kde.kitemmodels
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.plasma.core as PlasmaCore
-import org.kde.appletdecoration as AppletDecoration
 
 KCM.SimpleKCM {
     id: root
@@ -25,7 +25,6 @@ KCM.SimpleKCM {
     property alias cfg_selectedScheme: root.selectedScheme
     property alias cfg_selectedTheme: root.selectedTheme
     property alias cfg_buttons: root.currentButtons
-
     property alias cfg_buttonSizePercentage: buttonSizeSpn.value
     property alias cfg_useDecorationMetrics: decorationMetricsChk.checked
     property alias cfg_spacing: spacingSpn.value
@@ -105,6 +104,7 @@ KCM.SimpleKCM {
 
     ColumnLayout {
         id: mainColumn
+
         spacing: Kirigami.Units.largeSpacing
         Layout.fillWidth: true
 
@@ -142,8 +142,12 @@ KCM.SimpleKCM {
                 Layout.maximumWidth: 380
                 model: colorsModel
                 textRole: "display"
+                valueRole: "file"
+                onActivated: function(index) {
+                    root.selectedScheme = valueAt(index);
+                }
                 Component.onCompleted: {
-                    currentIndex = colorsModel.indexOf(plasmoid.configuration.selectedScheme);
+                    currentIndex = colorsModel.indexOf(root.selectedScheme || plasmoid.configuration.selectedScheme);
                 }
             }
 
