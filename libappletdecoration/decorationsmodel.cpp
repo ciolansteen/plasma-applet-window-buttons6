@@ -16,6 +16,7 @@
 #include <KDecoration3/DecorationSettings>
 #include <KDecoration3/DecorationThemeProvider>
 #include <KDirWatch>
+#include <KLocalizedString>
 #include <KPluginFactory>
 #include <KSharedConfig>
 #include <Plasma/PluginLoader>
@@ -141,11 +142,6 @@ static QString themeListKeyword(const QVariantMap &decoSettingsMap)
     return decoSettingsMap["themeListKeyword"].toString();
 }
 
-static QString findKNewStuff(const QVariantMap &decoSettingsMap)
-{
-    return decoSettingsMap["KNewStuff"].toString();
-}
-
 void DecorationsModel::init()
 {
     beginResetModel();
@@ -155,10 +151,6 @@ void DecorationsModel::init()
     for (const auto &info : plugins)
     {
         const auto decoSettingsMap = info.rawData().value("org.kde.kdecoration3").toObject().toVariantMap();
-
-        const QString &kns = findKNewStuff(decoSettingsMap);
-        if (!kns.isEmpty() && !m_knsProvides.contains(kns))
-            m_knsProvides.insert(kns, info.name().isEmpty() ? info.pluginId() : info.name());
 
         if (isThemeEngine(decoSettingsMap))
         {
@@ -178,8 +170,11 @@ void DecorationsModel::init()
                 data.themeName = t.themeName();
                 data.visibleName = t.visibleName();
 
-                if (data.pluginName == s_auroraePlugin && data.themeName.startsWith(s_auroraeSvgTheme))
+                if (data.pluginName.startsWith(s_auroraePlugin) && data.themeName.startsWith(s_auroraeSvgTheme))
                     data.isAuroraeTheme = true;
+
+                if (!data.isAuroraeTheme)
+                    continue;
 
                 qCInfo(decorations_model) << "Adding theme" << data.visibleName << "from" << data.pluginName;
                 m_plugins.emplace_back(std::move(data));
@@ -200,22 +195,33 @@ void DecorationsModel::init()
             m_plugins.emplace_back(std::move(data));
         }
     }
+
+    std::sort(m_plugins.begin(), m_plugins.end(), [](const Data &a, const Data &b) { return a.visibleName.localeAwareCompare(b.visibleName) < 0; });
+
+    Data currentData{
+        .pluginName = QString(),
+        .themeName = QString(),
+        .visibleName = i18n("Current"),
+        .isAuroraeTheme = false,
+        .configuration = false,
+    };
+    m_plugins.insert(m_plugins.begin(), std::move(currentData));
+
     endResetModel();
 }
 
 void DecorationsModel::loadCurrents()
 {
-    const KConfigGroup config = KSharedConfig::openConfig(s_kwinrc)->group(s_pluginName);
+    KConfigGroup config = KSharedConfig::openConfig(s_kwinrc)->group(s_pluginName);
+    if (!config.hasKey("library"))
+    {
+        config = KSharedConfig::openConfig(s_kwinrc)->group(QStringLiteral("org.kde.kdecoration2"));
+    }
+
     const QString plugin = config.readEntry("library", s_defaultPlugin);
     const QString theme = config.readEntry("theme", s_defaultTheme);
 
-    bool exists{ false };
-    bool isAur{ isAurorae(plugin, theme) };
-
-    if ((!isAur && pluginExists(plugin)) || (isAur && decorationExists(plugin, theme)))
-    {
-        exists = true;
-    }
+    bool exists{ decorationExists(plugin, theme) };
 
     setCurrentPlugin(exists ? plugin : s_defaultPlugin);
     setCurrentTheme(exists ? theme : s_defaultTheme);
@@ -231,9 +237,61 @@ void DecorationsModel::kwinChanged(const QString &filename)
     loadCurrents();
 }
 
+int DecorationsModel::indexOf(const QString &plugin, const QString &theme) const
+{
+    if (plugin.isEmpty())
+    {
+        return 0;
+    }
+
+    for (size_t i = 1; i < m_plugins.size(); ++i)
+    {
+        const auto &d = m_plugins[i];
+        if (d.pluginName == plugin)
+        {
+            if (d.isAuroraeTheme)
+            {
+                if (d.themeName == theme)
+                {
+                    return static_cast<int>(i);
+                }
+            }
+            else
+            {
+                if (d.themeName.isEmpty() || d.themeName == theme)
+                {
+                    return static_cast<int>(i);
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
 bool DecorationsModel::isAurorae(const QString &plugin, const QString &theme)
 {
-    auto it = std::find_if(m_plugins.cbegin(), m_plugins.cend(), [plugin, theme](const Data &d) { return d.pluginName == plugin && d.themeName == theme; });
+    QString p = plugin;
+    QString t = theme;
+    if (p.isEmpty())
+    {
+        p = m_currentPlugin;
+        t = m_currentTheme;
+    }
+
+    auto it = std::find_if(m_plugins.cbegin(), m_plugins.cend(),
+                           [p, t](const Data &d)
+                           {
+                               if (d.pluginName.isEmpty() || d.pluginName != p)
+                               {
+                                   return false;
+                               }
+                               if (d.isAuroraeTheme)
+                               {
+                                   return d.themeName == t;
+                               }
+                               return true;
+                           });
 
     if (it == m_plugins.cend())
     {
@@ -245,38 +303,24 @@ bool DecorationsModel::isAurorae(const QString &plugin, const QString &theme)
 
 bool DecorationsModel::decorationExists(const QString &plugin, const QString &theme)
 {
-    auto it = std::find_if(m_plugins.cbegin(), m_plugins.cend(), [plugin, theme](const Data &d) { return d.pluginName == plugin && d.themeName == theme; });
-
-    if (it == m_plugins.cend())
+    if (plugin.isEmpty())
     {
         return false;
     }
 
-    return true;
-}
+    auto it = std::find_if(m_plugins.cbegin(), m_plugins.cend(),
+                           [plugin, theme](const Data &d)
+                           {
+                               if (d.pluginName.isEmpty() || d.pluginName != plugin)
+                               {
+                                   return false;
+                               }
+                               if (d.isAuroraeTheme)
+                               {
+                                   return d.themeName == theme;
+                               }
+                               return d.themeName.isEmpty() || d.themeName == theme;
+                           });
 
-bool DecorationsModel::pluginExists(const QString &plugin)
-{
-    auto it = std::find_if(m_plugins.cbegin(), m_plugins.cend(), [plugin](const Data &d) { return d.pluginName == plugin; });
-
-    if (it == m_plugins.cend())
-    {
-        return false;
-    }
-
-    return true;
-}
-
-QModelIndex DecorationsModel::findDecoration(const QString &pluginName, const QString &themeName) const
-{
-    auto it =
-        std::find_if(m_plugins.cbegin(), m_plugins.cend(), [pluginName, themeName](const Data &d) { return d.pluginName == pluginName && d.themeName == themeName; });
-
-    if (it == m_plugins.cend())
-    {
-        return QModelIndex();
-    }
-
-    const auto distance = std::distance(m_plugins.cbegin(), it);
-    return createIndex(distance, 0);
+    return it != m_plugins.cend();
 }

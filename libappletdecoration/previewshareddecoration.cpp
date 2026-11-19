@@ -88,8 +88,21 @@ void SharedDecoration::applySettings()
 
 void SharedDecoration::createDecoration()
 {
-    if (!m_bridge || !m_settings)
+    if (!m_bridge || !m_settings || !m_settings->settings())
     {
+        return;
+    }
+
+    if (m_bridge->plugin().startsWith(QLatin1String("org.kde.kwin.aurorae")))
+    {
+        if (m_decoration)
+        {
+            m_decoration->deleteLater();
+            m_decoration = nullptr;
+        }
+        m_lastPlugin = m_bridge->plugin();
+        m_lastTheme = m_bridge->theme();
+        emit decorationChanged();
         return;
     }
 

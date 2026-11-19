@@ -93,15 +93,6 @@ KCM.SimpleKCM {
         id: palette
     }
 
-    // sort decorations based on display name
-    KSortFilterProxyModel {
-        id: sortedDecorations
-
-        sourceModel: decorations
-        sortRoleName: 'display'
-        sortOrder: Qt.AscendingOrder
-    }
-
     ColumnLayout {
         id: mainColumn
 

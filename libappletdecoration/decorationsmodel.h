@@ -27,19 +27,13 @@ class DecorationsModel : public QAbstractListModel
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    QModelIndex findDecoration(const QString &pluginName, const QString &themeName = QString()) const;
-
-    QMap<QString, QString> knsProviders() const
-    {
-        return m_knsProvides;
-    }
-
     int count() const;
 
     QString currentPlugin() const;
     QString currentTheme() const;
 
   public Q_SLOTS:
+    Q_INVOKABLE int indexOf(const QString &plugin, const QString &theme = QString()) const;
     Q_INVOKABLE bool decorationExists(const QString &plugin, const QString &theme);
     Q_INVOKABLE bool isAurorae(const QString &plugin, const QString &theme);
 
@@ -56,9 +50,6 @@ class DecorationsModel : public QAbstractListModel
     void setCurrentTheme(QString theme);
 
   private:
-    bool pluginExists(const QString &plugin);
-
-  private:
     struct Data
     {
         QString pluginName;
@@ -72,7 +63,6 @@ class DecorationsModel : public QAbstractListModel
     QString m_currentTheme;
 
     std::vector<Data> m_plugins;
-    QMap<QString, QString> m_knsProvides;
 };
 
 #endif

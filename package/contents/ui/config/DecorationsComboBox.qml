@@ -15,12 +15,20 @@ ComboBox {
     id: combobox
 
     function selectIndex(index) {
-        if (index < 0 || index >= sortedDecorations.rowCount())
+        if (index < 0 || index >= combobox.count)
             return ;
 
-        var idx = sortedDecorations.index(index, 0);
-        var p = sortedDecorations.data(idx, Qt.UserRole + 4);
-        var t = sortedDecorations.data(idx, Qt.UserRole + 5);
+        if (index === 0) {
+            if (typeof root !== "undefined") {
+                root.useCurrent = true;
+                root.selectedPlugin = "";
+                root.selectedTheme = "";
+            }
+            return ;
+        }
+        var idx = combobox.model.index(index, 0);
+        var p = combobox.model.data(idx, Qt.UserRole + 4);
+        var t = combobox.model.data(idx, Qt.UserRole + 5);
         if (typeof root !== "undefined") {
             root.useCurrent = false;
             root.selectedPlugin = p;
@@ -28,19 +36,7 @@ ComboBox {
         }
     }
 
-    function findDecorationIndex(plugin, theme) {
-        for (var i = 0; i < sortedDecorations.rowCount(); i++) {
-            var idx = sortedDecorations.index(i, 0);
-            var p = sortedDecorations.data(idx, Qt.UserRole + 4);
-            var t = sortedDecorations.data(idx, Qt.UserRole + 5);
-            if (p === plugin && t === theme)
-                return i;
-
-        }
-        return -1;
-    }
-
-    model: sortedDecorations
+    model: decorations
     textRole: "display"
     popup.width: Math.max(combobox.width, popup.implicitWidth)
     popup.height: Math.min(Kirigami.Units.gridUnit * 20, Math.max(popup.implicitHeight, popup.contentHeight))
@@ -48,7 +44,17 @@ ComboBox {
         selectIndex(index);
     }
     Component.onCompleted: {
-        currentIndex = findDecorationIndex(root.currentPlugin, root.currentTheme);
+        currentIndex = (typeof root !== "undefined" && root.useCurrent) ? 0 : decorations.indexOf(root.selectedPlugin, root.selectedTheme);
+    }
+
+    Connections {
+        function onUseCurrentChanged() {
+            if (root.useCurrent && combobox.currentIndex !== 0)
+                combobox.currentIndex = 0;
+
+        }
+
+        target: typeof root !== "undefined" ? root : null
     }
 
     delegate: ItemDelegate {

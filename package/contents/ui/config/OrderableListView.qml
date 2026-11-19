@@ -51,7 +51,9 @@ Rectangle {
     }
 
     function initializeControlButtonsModel() {
-        sharedDecorationItem.createDecoration();
+        if (!auroraeThemeEngine.isEnabled)
+            sharedDecorationItem.createDecoration();
+
         var buttonsList = buttonsStr.split('|');
         ModelTools.initializeControlButtonsModel(buttonsList, tasksPreparedArray, controlButtonsModel, false);
         listView.splitterIndex = ModelTools.indexOfSplitter(controlButtonsModel);

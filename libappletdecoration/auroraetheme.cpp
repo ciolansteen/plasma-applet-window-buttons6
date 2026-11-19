@@ -66,6 +66,11 @@ int AuroraeTheme::duration() const
 
 float AuroraeTheme::buttonRatio() const
 {
+    if (m_buttonHeight == 0)
+    {
+        return 1.0f;
+    }
+
     return ((float) m_buttonWidth / (float) m_buttonHeight);
 }
 
@@ -219,18 +224,21 @@ void AuroraeTheme::parseThemeImages()
 
     int maxOpacity = -1;
 
-    for (int y = 49; y >= 0; --y)
+    if (!img.isNull())
     {
-        for (int x = 0; x < 50; ++x)
+        for (int y = img.height() - 1; y >= 0; --y)
         {
-            QRgb pix = img.pixel(x, y);
-            int opacity = qAlpha(pix);
-
-            //! the equality returns better results for more aurorae themes
-            if (maxOpacity <= opacity)
+            for (int x = 0; x < img.width(); ++x)
             {
-                maxOpacity = opacity;
-                m_titleBackgroundColor = QColor(qRed(pix), qGreen(pix), qBlue(pix));
+                QRgb pix = img.pixel(x, y);
+                int opacity = qAlpha(pix);
+
+                //! the equality returns better results for more aurorae themes
+                if (maxOpacity <= opacity)
+                {
+                    maxOpacity = opacity;
+                    m_titleBackgroundColor = QColor(qRed(pix), qGreen(pix), qBlue(pix));
+                }
             }
         }
     }

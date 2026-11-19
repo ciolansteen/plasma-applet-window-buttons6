@@ -117,7 +117,9 @@ PlasmoidItem {
     }
 
     function initializeControlButtonsModel() {
-        sharedDecorationItem.createDecoration();
+        if (!auroraeThemeEngine.isEnabled)
+            sharedDecorationItem.createDecoration();
+
         var buttonsList = buttonsStr.split('|');
         ModelTools.initializeControlButtonsModel(buttonsList, tasksPreparedArray, controlButtonsModel, true);
     }
@@ -141,7 +143,7 @@ PlasmoidItem {
 
     function performActiveWindowAction(windowOperation) {
         if (blocksInactiveWindowActions)
-            return;
+            return ;
 
         if (windowOperation === AppletDecoration.Types.ActionClose)
             windowInfoLoader.item.toggleClose();
@@ -158,10 +160,13 @@ PlasmoidItem {
     function slideAnimationEasingType() {
         if (slideAnimationAcceleration <= 0)
             return Easing.Linear;
+
         if (slideAnimationAcceleration === 1)
             return Easing.InQuad;
+
         if (slideAnimationAcceleration === 2)
             return Easing.InCubic;
+
         if (slideAnimationAcceleration === 3)
             return Easing.InQuart;
 
@@ -337,7 +342,6 @@ PlasmoidItem {
                 // Per-screen: when perScreenActive is on and a local window is shown,
                 // keep buttons bright even if global focus moved to another screen.
                 var perScreenLocalContext = root.perScreenActive && root.existsWindowShown;
-
                 if (root.blocksInactiveWindowActions || (!perScreenLocalContext && root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions))
                     return false;
 
@@ -411,7 +415,6 @@ PlasmoidItem {
                 // Per-screen: when perScreenActive is on and a local window is shown,
                 // keep buttons bright even if global focus moved to another screen.
                 var perScreenLocalContext = root.perScreenActive && root.existsWindowShown;
-
                 if (root.blocksInactiveWindowActions || (!perScreenLocalContext && root.inactiveStateEnabled && root.existsWindowShown && !root.isLastActiveWindowActive && !root.dimsInactiveWindowActions))
                     return false;
 
