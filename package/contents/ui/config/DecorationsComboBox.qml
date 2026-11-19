@@ -40,6 +40,11 @@ ComboBox {
     textRole: "display"
     popup.width: Math.max(combobox.width, popup.implicitWidth)
     popup.height: Math.min(Kirigami.Units.gridUnit * 20, Math.max(popup.implicitHeight, popup.contentHeight))
+    popup.onAboutToShow: {
+        if (popup.contentItem)
+            popup.contentItem.interactive = true;
+
+    }
     onActivated: function(index) {
         selectIndex(index);
     }
