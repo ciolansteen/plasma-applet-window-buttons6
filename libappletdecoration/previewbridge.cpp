@@ -91,7 +91,7 @@ void PreviewBridge::createFactory()
 {
     m_factory.clear();
 
-    if (m_plugin.isNull())
+    if (m_plugin.isNull() || m_plugin.startsWith(QLatin1String("org.kde.kwin.aurorae")))
     {
         setValid(false);
         return;
@@ -130,7 +130,7 @@ KDecoration3::Decoration *PreviewBridge::createDecoration(QObject *parent)
         return nullptr;
     }
 
-    QVariantMap args({ { QStringLiteral("bridge"), QVariant::fromValue(this) } });
+    QVariantMap args({ { QStringLiteral("bridge"), QVariant::fromValue(static_cast<KDecoration3::DecorationBridge *>(this)) } });
 
     if (!m_theme.isNull())
     {
